@@ -1,3 +1,4 @@
+<%@page import="java.text.SimpleDateFormat"%>
 <%@page import="java.util.Iterator"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.ArrayList"%>
@@ -13,6 +14,7 @@
 	OracleDAOImpl dao = new OracleDAOImpl(dbMgrName, dbMgrPass); 
 	List<GuestBookVo> list = dao.getList();
 	Iterator<GuestBookVo> iter = list.iterator();
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
 %>
  
    
@@ -25,7 +27,7 @@
 	<title>방명록</title>
 	<style>
 		table {
-			width: 70%;
+			width: 100%;
 		}
 	
 		table, tr, td{
@@ -33,6 +35,14 @@
 			border-color: black;
 			border-width: 1px;
 		}	
+		
+		td {
+			witdh: 100%;
+		}
+		
+		textarea {
+			width = 99%;
+		}
 	</style>
 	
 	<script>
@@ -44,19 +54,23 @@
 			}
 		}
 		
-		function del(event, target) {
+		function del(event, target, no, pass) {
 			event.preventDefault(); 
 			
-			if(confirm("정말 이 글을 삭제하시겠습니까?")){
-				target.submit();
+			if(confirm("정말 " + no +"번 글을 삭제하시겠습니까?")){
+				let passConfirm = prompt("비밀번호를 입력하세요", ' ');
+				
+				if(passConfirm == pass)
+					target.submit();
+				else
+					alert("비밀번호가 일치하지 않습니다!");
 			}
 		}
 	</script>
 </head>
 
 <body>
-
-
+	<h1>오라클 게시판</h1>
 	<table id="insertForm">
 		<form action= "<%=context.getContextPath()%>/function/add.jsp"
 		method="POST" onsubmit="post(event, this)">
@@ -73,7 +87,7 @@
 			<tr>
 				<td colspan = 4>
 					<!-- 클릭시 내용 초기화 넣기 -->
-					<textarea cols="80" rows="5" name="content">게시판 규정과 맞지 않는 글은 삭제 될 수 있습니다.</textarea>
+					<textarea cols="80" rows="5" name="content" onclick=this.value="">게시판 규정과 맞지 않는 글은 삭제 될 수 있습니다.</textarea>
 				</td>
 			</tr>
 			<tr>
@@ -83,20 +97,22 @@
 	</table>
 	
 	<br>
-<% while(iter.hasNext()) { 
-	GuestBookVo vo = iter.next();
+<% 
+	int index = 0;
+	while(iter.hasNext()) { 
+		GuestBookVo vo = iter.next();
+		index++;
 %>
 	<table class="guestBook">
 		<tr>
-			<td><%= vo.getNo() %></td>
-			<td><%= vo.getName() %></td>
-			<td><%= vo.getDate() %></td>
+			<td><%= index %></td>
+			<td>닉네임 : <%= vo.getName() %></td>
+			<td>작성시간 :<%= sdf.format(vo.getDate()) %></td>
 			<td>
 				<form action= "<%=context.getContextPath()%>/function/delete.jsp"
-						method="POST" onsubmit="del(event, this)">
-				<input type="hidden" name="no" value="<%= vo.getNo()%>">
+						method="POST" onsubmit="del(event, this, <%=index%>, <%=vo.getPass()%>)">
+						<input type="hidden" name="no" value="<%= vo.getNo()%>">
 						<button>삭제</button>
-						<!-- 버튼으로 일단 만들자 -->
 				</form>
 			</td>
 		</tr>
