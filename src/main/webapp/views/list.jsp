@@ -7,8 +7,10 @@
     pageEncoding="UTF-8"%>
 <% 
 	ServletContext context = getServletContext();
-	// TODO: db테스트 이후 context 정보로 가져올 것 
-	OracleDAOImpl dao = new OracleDAOImpl("himedia", "himedia"); 
+	String dbMgrName = context.getInitParameter("dbUser");
+	String dbMgrPass = context.getInitParameter("dbPass");
+	
+	OracleDAOImpl dao = new OracleDAOImpl(dbMgrName, dbMgrPass); 
 	List<GuestBookVo> list = dao.getList();
 	Iterator<GuestBookVo> iter = list.iterator();
 %>
@@ -41,28 +43,43 @@
 				target.submit();
 			}
 		}
+		
+		function del(event, target) {
+			event.preventDefault(); 
+			
+			if(confirm("정말 이 글을 삭제하시겠습니까?")){
+				target.submit();
+			}
+		}
 	</script>
 </head>
 
 <body>
-	<form action= "<%=context.getContextPath()%>/add.jsp"
-		method="POST" onsubmit="post(event, this)">
-	</form>
+
+
 	<table id="insertForm">
-		<tr>
-			<td>이름</td>
-			<td>
-				<input type="text" id="name" name="name"></input>
-			</td>
-			<td>비밀번호</td>
-			<td></td>
-		</tr>
-		<tr>
-			<td colspan = 4></td>
-		</tr>
-		<tr>
-			<td colspan = 4> <button>작성</button> </td>
-		<tr>
+		<form action= "<%=context.getContextPath()%>/function/add.jsp"
+		method="POST" onsubmit="post(event, this)">
+			<tr>
+				<td>이름</td>
+				<td>
+					<input type="text" name="name" required></input>
+				</td>
+				<td>비밀번호</td>
+				<td>
+					<input type="password" name="pass" required></input>
+				</td>
+			</tr>
+			<tr>
+				<td colspan = 4>
+					<!-- 클릭시 내용 초기화 넣기 -->
+					<textarea cols="80" rows="5" name="content">게시판 규정과 맞지 않는 글은 삭제 될 수 있습니다.</textarea>
+				</td>
+			</tr>
+			<tr>
+				<td colspan = 4> <button>작성</button> </td>
+			<tr>
+		</form>
 	</table>
 	
 	<br>
@@ -74,7 +91,14 @@
 			<td><%= vo.getNo() %></td>
 			<td><%= vo.getName() %></td>
 			<td><%= vo.getDate() %></td>
-			<td><a href=#>삭제</a></td>
+			<td>
+				<form action= "<%=context.getContextPath()%>/function/delete.jsp"
+						method="POST" onsubmit="del(event, this)">
+				<input type="hidden" name="no" value="<%= vo.getNo()%>">
+						<button>삭제</button>
+						<!-- 버튼으로 일단 만들자 -->
+				</form>
+			</td>
 		</tr>
 		<tr>
 			<td colspan = 4><%= vo.getContent() %></td>
