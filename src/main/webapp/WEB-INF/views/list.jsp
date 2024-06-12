@@ -2,19 +2,22 @@
 <%@page import="java.util.Iterator"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.ArrayList"%>
-<%@page import="oracle.OracleDAOImpl"%>
 <%@page import="vo.GuestBookVo"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <% 
 	ServletContext context = getServletContext();
-	String dbMgrName = context.getInitParameter("dbUser");
-	String dbMgrPass = context.getInitParameter("dbPass");
-	
-	OracleDAOImpl dao = new OracleDAOImpl(dbMgrName, dbMgrPass); 
-	List<GuestBookVo> list = dao.getList();
-	Iterator<GuestBookVo> iter = list.iterator();
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
+	List<GuestBookVo> list = null;
+	Iterator<GuestBookVo> iter = null;
+	
+	if(request.getAttribute("list") instanceof List){
+		list = (List<GuestBookVo>)request.getAttribute("list");
+		iter = list.iterator();
+	}
+	else {
+		System.out.println("정보를 불러오지 못했습니다.");
+	}
 %>
  
    
@@ -45,15 +48,7 @@
 		}
 	</style>
 	
-	<script>
-		function post(event, target){
-			event.preventDefault(); 
-			
-			if(confirm("글을 올리시겠습니까?")){
-				target.submit();
-			}
-		}
-		
+	<script>	
 		function del(event, target, no, pass) {
 			event.preventDefault(); 
 			
@@ -72,8 +67,8 @@
 <body>
 	<h1>오라클 게시판</h1>
 	<table id="insertForm">
-		<form action= "<%=context.getContextPath()%>/function/add.jsp"
-		method="POST" onsubmit="post(event, this)">
+		<form action= "<%=context.getContextPath()%>/gb?action=add"
+		method="POST">
 			<tr>
 				<td>이름</td>
 				<td>
@@ -109,8 +104,9 @@
 			<td>닉네임 : <%= vo.getName() %></td>
 			<td>작성시간 :<%= sdf.format(vo.getDate()) %></td>
 			<td>
-				<form action= "<%=context.getContextPath()%>/function/delete.jsp"
-						method="POST" onsubmit="del(event, this, <%=index%>, <%=vo.getPass()%>)">
+				<form action= "<%=context.getContextPath()%>/gb?action=deleteform"
+						method="POST">
+						<input type="hidden" name="pass" value="<%= vo.getPass()%>">
 						<input type="hidden" name="no" value="<%= vo.getNo()%>">
 						<button>삭제</button>
 				</form>
