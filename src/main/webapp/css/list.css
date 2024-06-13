@@ -1,0 +1,20 @@
+@charset "UTF-8";
+
+table {
+	width: 100%;
+}
+
+table, tr, td {
+	border-style: solid;
+	border-color: black;
+	border-width: 1px;
+}
+
+td {
+	witdh: 100%;
+}
+
+textarea {
+	width: 99%;
+	
+}

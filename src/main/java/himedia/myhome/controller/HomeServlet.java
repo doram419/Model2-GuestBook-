@@ -15,10 +15,7 @@ public class HomeServlet extends BaseServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String action = req.getParameter("action");
 		
-		if("home".equals(action)) {
-			RequestDispatcher rd = getServletContext().getRequestDispatcher("/WEB-INF/views/home.jsp");
-			rd.forward(req, resp);
-		} else if("joinform".equals(action)) {
+		if("joinform".equals(action)) {
 			RequestDispatcher rd = getServletContext().getRequestDispatcher("/WEB-INF/views/joinform.jsp");
 			rd.forward(req, resp);
 		} else if("joinsuccess.jsp".equals(action)) {

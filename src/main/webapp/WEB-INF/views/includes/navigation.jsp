@@ -7,7 +7,7 @@
 
 <head>
 	<meta charset="UTF-8">
-	<title>Insert title here</title>
+	<title>네비게이션</title>
 </head>
 
 <body>
@@ -15,7 +15,7 @@
 	
 	<ul>
 	  <li> <a href="<%= request.getContextPath() %>/home?action=">My Home</a> </li>
-	  <li> <a href="<%= request.getContextPath() %>/guestbook">방명록</a> </li>
+	  <li> <a href="<%= request.getContextPath() %>/gb?action=list">방명록</a> </li>
 	  <li> <a href="<%= request.getContextPath() %>/board">게시판</a> </li>
 	</ul>
 	
